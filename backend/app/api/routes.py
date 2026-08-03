@@ -6,6 +6,8 @@ router = APIRouter()
 
 router.include_router(auth_router)
 
+from app.api.scene import router as scene_router
+router.include_router(scene_router)
 
 @router.get("/")
 def home():

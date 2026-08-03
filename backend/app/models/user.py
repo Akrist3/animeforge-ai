@@ -9,7 +9,11 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(50), unique=True, nullable=False)
     email = Column(String(255), unique=True, nullable=False)
-    projects = relationship("Project", back_populates="owner", cascade="all, delete",)
+    projects = relationship(
+    "Project",
+    back_populates="owner",
+    cascade="all, delete-orphan",
+    )
 
     password_hash = Column(String(255), nullable=True)
 

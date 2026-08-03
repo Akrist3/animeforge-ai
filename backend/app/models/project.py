@@ -19,4 +19,13 @@ class Project(Base):
         nullable=False,
     )
 
-    owner = relationship("User", back_populates="projects")
+    owner = relationship(
+        "User",
+        back_populates="projects",
+    )
+
+    scenes = relationship(
+        "Scene",
+        back_populates="project",
+        cascade="all, delete-orphan",
+    )
