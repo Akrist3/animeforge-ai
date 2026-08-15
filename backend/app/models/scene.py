@@ -29,3 +29,8 @@ class Scene(Base):
         "Project",
         back_populates="scenes",
     )
+    generation_jobs = relationship(
+    "GenerationJob",
+    back_populates="scene",
+    cascade="all, delete-orphan",
+)

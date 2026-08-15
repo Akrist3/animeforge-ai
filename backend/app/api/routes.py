@@ -5,6 +5,7 @@ from app.api.scene import router as scene_router
 from app.api.image import router as image_router
 from app.api.video import router as video_router
 from app.api.voice import router as voice_router
+from app.api.generation import router as generation_router
 
 router = APIRouter()
 
@@ -13,7 +14,7 @@ router.include_router(scene_router)
 router.include_router(image_router)
 router.include_router(video_router)
 router.include_router(voice_router)
-
+router.include_router(generation_router)
 
 @router.get("/")
 def home():
