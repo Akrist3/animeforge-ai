@@ -6,6 +6,8 @@ from app.auth.oauth2 import get_current_user
 
 from app.models.user import User
 
+from app.crud.project import get_project
+
 from app.crud.scene import get_scene
 from app.crud.generation_job import (
     create_generation_job,
@@ -45,6 +47,19 @@ def create_job(
             detail="Scene not found",
         )
 
+    # Check scene's project ownership
+    project = get_project(
+        db,
+        current_user.id,
+        scene.project_id,
+    )
+
+    if not project:
+        raise HTTPException(
+            status_code=404,
+            detail="Scene not found",
+        )
+
     allowed_types = {
         "image",
         "video",
@@ -69,7 +84,10 @@ def create_job(
     )
 
     return job
-    
+@router.get(
+    "/{job_id}",
+    response_model=GenerationJobResponse,
+)
 @router.get(
     "/{job_id}",
     response_model=GenerationJobResponse,
@@ -90,9 +108,35 @@ def get_job(
             detail="Generation job not found",
         )
 
+    scene = get_scene(
+        db,
+        job.scene_id,
+    )
+
+    if not scene:
+        raise HTTPException(
+            status_code=404,
+            detail="Generation job not found",
+        )
+
+    project = get_project(
+        db,
+        current_user.id,
+        scene.project_id,
+    )
+
+    if not project:
+        raise HTTPException(
+            status_code=404,
+            detail="Generation job not found",
+        )
+
     return job
 
-
+@router.get(
+    "/scene/{scene_id}",
+    response_model=list[GenerationJobResponse],
+)
 @router.get(
     "/scene/{scene_id}",
     response_model=list[GenerationJobResponse],
@@ -108,6 +152,18 @@ def get_scene_jobs(
     )
 
     if not scene:
+        raise HTTPException(
+            status_code=404,
+            detail="Scene not found",
+        )
+
+    project = get_project(
+        db,
+        current_user.id,
+        scene.project_id,
+    )
+
+    if not project:
         raise HTTPException(
             status_code=404,
             detail="Scene not found",
